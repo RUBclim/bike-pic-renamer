@@ -26,12 +26,12 @@ usage: bike-pic-renamer [-h] [--output-dir OUTPUT_DIR] files [files ...]
 Rename bike pictures based on nearest station and timestamp.
 
 positional arguments:
-  files                 Directory containing the input images. May be a glob pattern
+  files                 The input images any number can be specified. It may be a glob pattern
 
 options:
   -h, --help            show this help message and exit
   --output-dir OUTPUT_DIR
-                        Directory to save the renamed images.
+                        Directory to save the renamed images to
 ```
 
 Rename a folder of files like this:

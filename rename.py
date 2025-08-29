@@ -181,14 +181,14 @@ def main() -> int:
     parser.add_argument(
         'files',
         type=str,
-        help='Directory containing the input images. May be a glob pattern',
+        help='The input images any number can be specified. It may be a glob pattern',
         nargs='+',
     )
     parser.add_argument(
         '--output-dir',
         default='images-renamed',
         type=str,
-        help='Directory to save the renamed images.',
+        help='Directory to save the renamed images to',
     )
     args = parser.parse_args(namespace=NameSpace())
     crs = ccrs.epsg(STATIONS.crs.to_epsg())
