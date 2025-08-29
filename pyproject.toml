@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bike-pic-renamer"
+version = "1.0.0"
+dependencies = [
+    "contextily",
+    "pandas",
+    "geopandas",
+    "matplotlib",
+    "matplotlib-scalebar",
+    "Pillow",
+    "shapely",
+    "cartopy",
+]
+requires-python = ">=3.11"
+authors = [{ name = "D2R-Team", email = "climate@rub.de" }]
+maintainers = [{ name = "Jonas Kittner", email = "jonas.kittner@rub.de" }]
+description = "Automatically rename photos based on EXIF GPS data"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE*"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+
+[project.scripts]
+bike-pic-renamer = "rename:main"
+
+[project.urls]
+Homepage = "https://github.com/RUBclim/bike-pic-renamer"
+Repository = "https://github.com/RUBclim/bike-pic-renamer"
+
+
+[tool.setuptools]
+py-modules = ["rename"]
+
+
+[tool.autopep8]
+max_line_length = 88
+
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_unreachable = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+show_error_codes = true
