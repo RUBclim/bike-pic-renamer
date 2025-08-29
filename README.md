@@ -1,3 +1,5 @@
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/RUBclim/bike-pic-renamer/master.svg)](https://results.pre-commit.ci/latest/github/RUBclim/bike-pic-renamer/master)
+
 # bike-pic-renamer
 
 Automatically rename photos based on EXIF GPS data.
