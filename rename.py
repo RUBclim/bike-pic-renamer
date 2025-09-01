@@ -34,7 +34,7 @@ STATIONS = gpd.GeoDataFrame.from_dict(
     orient='index',
     crs='EPSG:4326',
     columns=['geometry'],
-).to_crs(crs='EPSG:25832').buffer(35).to_frame()
+).to_crs(crs='EPSG:25832').buffer(45).to_frame()
 
 
 def scale_bar(
@@ -111,7 +111,7 @@ class Photo(NamedTuple):
                 v in named_tags['GPSInfo'].items()
             }
         except KeyError:
-            print('WARNING: image () has no GPS Information')
+            print('\033[93mWARNING: image () has no GPS Information\033[0m')
             gps = {}
 
         try:
@@ -122,7 +122,7 @@ class Photo(NamedTuple):
                 reference=gps['GPSLatitudeRef'],
             )
         except KeyError:
-            print('WARNING: image has no valid latitude')
+            print('\033[93mWARNING: image has no valid latitude\033[0m')
             lat = float('nan')
         try:
             lon = deg_min_secs_to_decimal(
@@ -132,13 +132,13 @@ class Photo(NamedTuple):
                 reference=gps['GPSLongitudeRef'],
             )
         except KeyError:
-            print('WARNING: image has no valid longitude')
+            print('\033[93mWARNING: image has no valid longitude\033[0m')
             lon = float('nan')
 
         try:
             alt = float(gps['GPSAltitude']) + float(gps['GPSAltitudeRef'])
         except (KeyError, ValueError):
-            print('WARNING: image has no valid altitude')
+            print('\033[93mWARNING: image has no valid altitude\033[0m')
             alt = float('nan')
 
         return cls(
@@ -196,6 +196,7 @@ def main() -> int:
     ax = STATIONS.plot(ax=ax, facecolor=(0, 0, 1, 0.1), edgecolor='blue', linewidth=2)
     cx.add_basemap(ax, crs='EPSG:25832')
     photo_points = []
+    unknown_photos = []
     for idx, fname in enumerate(args.files):
         print(f'{idx + 1}/{len(args.files)} - {fname}')
         if idx == len(args.files) - 1:
@@ -203,35 +204,47 @@ def main() -> int:
         with Image.open(fname) as img:
             img_obj = Photo.from_image(img)
 
-        photo_point = img_obj.to_geodataframe().to_crs('EPSG:25832').sjoin(
-            STATIONS,
-            how='inner',
-            predicate='within',
-        )
+        img_gdf = img_obj.to_geodataframe().to_crs('EPSG:25832')
+        photo_point = img_gdf.sjoin(STATIONS, how='inner', predicate='within')
         if photo_point.empty:
-            print(f'No station found for image: {fname}, skipping!')
+            print(f'\033[91mNo station found for image: {fname}, skipping!\033[0m')
+            unknown_photos.append(img_gdf)
             continue
         station_id = photo_point.index_right.values[0]
         date_taken = img_obj.date.astimezone(
             timezone.utc,
-        ).strftime('%Y-%m-%dT%H:%M:%SZ')
+        ).strftime('%Y-%m-%dT%H%M%SZ')
         new_name = f'{station_id}_{date_taken}.jpg'
         os.makedirs(args.output_dir, exist_ok=True)
         new_path = os.path.join(args.output_dir, new_name)
         shutil.copy(fname, new_path)
         photo_points.append(photo_point)
+
     if photo_points:
         all_photo_points = gpd.GeoDataFrame(pd.concat(photo_points), crs='EPSG:25832')
         all_photo_points.plot(
             ax=ax,
-            color='red',
+            color='green',
             alpha=0.7,
             markersize=20,
             edgecolor='black',
             lw=0.25,
             label='Photo',
         )
-    ax.legend()
+    if unknown_photos:
+        all_unknown_photos = gpd.GeoDataFrame(
+            pd.concat(unknown_photos),
+            crs='EPSG:25832',
+        )
+        all_unknown_photos.plot(
+            ax=ax,
+            color='red',
+            markersize=20,
+            edgecolor='black',
+            lw=0.25,
+            label='no station found',
+        )
+    ax.legend(loc='lower right')
     ax.add_artist(
         scale_bar(
             STATIONS, to_crs=STATIONS.crs.to_epsg(),
