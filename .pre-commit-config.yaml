@@ -37,21 +37,21 @@ repos:
     hooks:
     -    id: double-indent
 -   repo: https://github.com/asottile/reorder-python-imports
-    rev: v3.15.0
+    rev: v3.17.0
     hooks:
     -   id: reorder-python-imports
         args: [--py312-plus]
 -   repo: https://github.com/asottile/add-trailing-comma
-    rev: v3.2.0
+    rev: v4.0.0
     hooks:
     -   id: add-trailing-comma
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.20.0
+    rev: v3.21.2
     hooks:
     -   id: pyupgrade
         args: [--py311-plus]
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.17.1
+    rev: v2.3.1
     hooks:
     -   id: mypy
         additional_dependencies: [pandas-stubs]
